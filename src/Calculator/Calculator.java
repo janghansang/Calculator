@@ -52,11 +52,18 @@ public class Calculator extends Frame {
 		public void actionPerformed(ActionEvent e) {
 			JButton source = (JButton) e.getSource();
 			int value;
-			if (source == bOp[4]) {
+			if (source == bOp[4]/* C버튼*/) {
 				tf.setText("0"); 
 				inputValue = null; 
 				lastOp = 0; 
 				result = 0; 
+				return;
+			}
+			if (source == bOp[5]/* bs버튼*/) {
+				int x= Integer.parseInt(inputValue);
+				x /= 10;
+				inputValue = Integer.toString(x);
+				tf.setText(inputValue); 
 				return;
 			}
 			if (inputValue != null) {
