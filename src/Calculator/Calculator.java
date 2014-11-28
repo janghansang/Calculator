@@ -7,9 +7,9 @@ import javax.swing.JButton;
 public class Calculator extends Frame {
 	
 	TextField tf;
-	JButton bNum[] = new JButton[10]; 
+	JButton bNum[] = new JButton[10]; // getText() 쓰기위해서 JButton 썼어요
+	JButton bOp[]= new JButton[7];    
 	String title[]={"+","-","*","/","C","bs","="};
-	JButton bOp[]= new JButton[7];
 	String inputValue; 
 	int i;
 	int result; 
@@ -23,38 +23,28 @@ public class Calculator extends Frame {
 				System.exit(0);
 			}
 		});
-
-		tf = new TextField("0");
-		add(tf, BorderLayout.NORTH);
+		add(tf= new TextField("0"), BorderLayout.NORTH);
 		Panel p = new Panel(new GridLayout(4, 5, 2, 2));
-		add(p, BorderLayout.CENTER);
-
 		for (i = 0; i < bNum.length; i++) {
 			bNum[i] = new JButton(Integer.toString(i));
 			bNum[i].addActionListener(new NumberHandler());
 			p.add(bNum[i]);
 		}		
-		
 		for(i=0; i<title.length; i++){
 			bOp[i]=new JButton(title[i]);
 			bOp[i].addActionListener(new CalcHandler());
 			p.add(bOp[i]);		
 		}
-		
+		add(p, BorderLayout.CENTER);
 		setVisible(true);
 	}
 
 	class NumberHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String s = e.getActionCommand(); 
-			if (inputValue == null) {
-				if (s.equals("0"))
-					return; 
-				else
-					inputValue = new String(); 
-			}			
-			inputValue += s; // 두번째 이후이면 누른 숫자 덧붙이기
-			tf.setText(inputValue); // 현재 숫자 화면에 표시
+			if (inputValue == null) inputValue = new String(); 		
+			inputValue += s;
+			tf.setText(inputValue); 
 		}
 	}
 
@@ -72,21 +62,11 @@ public class Calculator extends Frame {
 			if (inputValue != null) {
 				value = Integer.parseInt(inputValue);
 				switch (lastOp) {
-				case '+':
-					result += value;
-					break;
-				case '-':
-					result -= value;
-					break;
-				case '*':
-					result *= value;
-					break;
-				case '/':
-					result /= value;
-					break;
-				default:
-					result = value;
-					break;
+				case '+':  result += value;  break;
+				case '-':  result -= value;  break;
+				case '*':  result *= value;  break;
+				case '/':  result /= value;  break;
+				default:   result = value;   break;
 				}
 				tf.setText(Integer.toString(result));
 			}
