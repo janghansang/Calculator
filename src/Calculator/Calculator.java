@@ -1,50 +1,128 @@
 package Calculator;
-import java.awt.Button;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Panel;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.*;
 
+public class Calculator extends JFrame {
+	JLabel label;
+	JButton bNum[] = new JButton[10]; 
+	JButton plus, minus, multi, div, equal, clear; 
+	String inputValue; 
+	int result; 
+	char lastOp;
 
-public class Calculator extends Frame{
-    public Calculator(){
-        super("계산기");
-		addWindowListener(new WindowAdapter(){
-			public void windowClosing(WindowEvent e){//e 가 아니라 다른거 써도 됨
-				System.exit(0);
+	public static void main(String[] args) {
+		new Calculator();
+	}
+
+	public Calculator() {
+		super("계산기");
+		setBounds(200, 200, 300, 300);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		label = new JLabel("0", JLabel.RIGHT);
+
+		add(label, BorderLayout.NORTH);
+
+		JPanel p = new JPanel(new GridLayout(4, 4, 2, 2));
+		add(p, BorderLayout.CENTER);
+
+		plus = new JButton("+");
+		minus = new JButton("-");
+		multi = new JButton("*");
+		div = new JButton("/");
+		equal = new JButton("=");
+		clear = new JButton("C");
+
+		int i;
+		for (i = 0; i < bNum.length; i++) {
+			bNum[i] = new JButton(Integer.toString(i));
+		}
+
+		p.add(bNum[7]);
+		p.add(bNum[8]);
+		p.add(bNum[9]);
+		p.add(plus);
+		p.add(bNum[4]);
+		p.add(bNum[5]);
+		p.add(bNum[6]);
+		p.add(minus);
+		p.add(bNum[1]);
+		p.add(bNum[2]);
+		p.add(bNum[3]);
+		p.add(multi);
+		p.add(bNum[0]);
+		p.add(equal);
+		p.add(clear);
+		p.add(div);
+
+		NumberHandler nh = new NumberHandler();
+		for (i = 0; i < bNum.length; i++) {
+			bNum[i].addActionListener(nh);
+		}
+
+		CalcHandler ch = new CalcHandler();
+		plus.addActionListener(ch);
+		minus.addActionListener(ch);
+		multi.addActionListener(ch);
+		div.addActionListener(ch);
+		equal.addActionListener(ch);
+		clear.addActionListener(ch);
+		setVisible(true);
+	}
+
+	class NumberHandler implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			String s = e.getActionCommand(); // 클릭한 버튼의 레이블
+			inputValue = new String(); // 첫 자리이면 String 객체 생성
+			
+			if (inputValue.length() >= 9)
+				return; // 9자리 넘으면 무시
+			inputValue += s; // 두번째 이후이면 누른 숫자 덧붙이기
+			label.setText(inputValue); // 현재 숫자 화면에 표시
+		}
+	}
+
+	class CalcHandler implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JButton source = (JButton) e.getSource();
+			int value;
+
+			if (source == clear) {
+				label.setText("0"); 
+				inputValue = null; 
+				lastOp = 0; 
+				result = 0; 
+				return;
 			}
-		});
-        this.setSize(300, 300);
-        this.setLocation(500, 200);
-        this.setVisible(true);
-        
-        
-		TextField tf = new TextField("0");
-		this.add("North",tf);
-		
-		Panel numPanel=new Panel();
-        GridLayout gl = new GridLayout(4, 5, 5, 5);
-    	numPanel.setLayout(gl);
-        String btTitle[] = { "1","2","3","4","5",
-        		             "6","7","8","9","0",
-        		             "+","-","*","/","<",
-        		              "c", "=", "=", "=", "="};
-        Button num[][] = new Button[4][5];
-        for(int i=0 ; i<4 ; i++){
-            for(int j=0 ; j<5 ; j++){
-                num[i][j] = new Button(String.valueOf(btTitle[j+i*5]));
-            }
-        }
-       for(int i=0 ; i<4 ; i++)
-            for(int j=0 ; j<5 ; j++)
-                numPanel.add(num[i][j]);
-		this.add("Center",numPanel);
-        
-    }
-
+			// 기타 계산 +,-,*,/
+			if (inputValue != null) {
+				value = Integer.parseInt(inputValue);
+				switch (lastOp) {
+				case '+':
+					result += value;
+					break;
+				case '-':
+					result -= value;
+					break;
+				case '*':
+					result *= value;
+					break;
+				case '/':
+					result /= value;
+					break;
+				default:
+					result = value;
+					break;
+				}
+				label.setText(Integer.toString(result));
+			}
+			inputValue = null;
+			lastOp = source.getText().charAt(0);
+		}
+	}
 }
+
